@@ -29,13 +29,14 @@
 
 src\__init__.py          0      0   100%
 
-src\main.py             46     27    41%
+src\main.py             18      0   100%
 
 tests\__init__.py        0      0   100%
 
 tests\test_main.py      16      0   100%
 
-TOTAL                   62     27    56%
+TOTAL                   34      0   100%
+
 
 
 
