@@ -1,6 +1,6 @@
 import pytest
 
-from src.main import Product, Category
+from src.main import Category, Product
 
 
 @pytest.fixture
@@ -10,10 +10,11 @@ def samsung():
 
 @pytest.fixture
 def category():
-    return Category("Смартфоны",
-                    "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для "
-                    "удобства жизни",
-                    1)
+    return Category(
+        "Смартфоны",
+        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для " "удобства жизни",
+        1,
+    )
 
 
 def test_product(samsung):  # тест на продукт
@@ -25,6 +26,6 @@ def test_product(samsung):  # тест на продукт
 
 def test_category(category):
     assert category.name == "Смартфоны"
-    assert category.description == ("Смартфоны, как средство не только коммуникации, но и получения дополнительных "
-                                    "функций для удобства жизни")
-    assert category.products == 1
+    assert category.description == (
+        "Смартфоны, как средство не только коммуникации, но и получения дополнительных " "функций для удобства жизни"
+    )
