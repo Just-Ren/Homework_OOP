@@ -58,7 +58,7 @@ class Category:
         Category.product_count += 1
 
     @property
-    def get_product_list(self) -> str:
+    def products(self) -> str:
         product_list = ""
         for product in self.__products:
             product_list += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
@@ -82,10 +82,10 @@ if __name__ == "__main__":
         [product1, product2, product3],
     )
 
-    print(category1.get_product_list)
+    print(category1.products)
     product4 = Product('55" QLED 4K', "Фоновая подсветка", 123000.0, 7)
     category1.add_product(product4)
-    print(category1.get_product_list)
+    print(category1.products)
     print(category1.product_count)
 
     new_product = Product.new_product(
