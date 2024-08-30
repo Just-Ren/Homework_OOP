@@ -109,6 +109,11 @@ def test_cat_get_product_list_property(first_category, second_category):
         "\nProduct three, 8467.56 руб. Остаток: 32 шт.\n"
     )
 
+
+def test_category_str(first_category, second_category):
+    assert str(first_category) == "Category, количество продуктов: 2 шт."
+    assert str(second_category) == "Category number two, количество продуктов: 3 шт."
+
 def test_product(first_product, second_product):
     assert first_product.name == "Product"
     assert first_product.description == "Description of the product"
@@ -132,6 +137,14 @@ def test_new_product(product_dict):
 def test_prod_price_property(capsys, first_product):
     first_product.price = -756.57
     message = capsys.readouterr()
-    assert message.out.strip() == "Цена не должна быть нулевая или отрицательная"
+    assert message.out.strip() == "Цена не должна быть нулевая или орицательная"
     first_product.price = 756.57
     assert first_product.price == 756.57
+
+
+def test_product_str(first_product):
+    assert str(first_product) == "Product, 84.5 руб. Остаток: 10 шт."
+
+
+def test_product_add(first_product, second_product):
+    assert first_product + second_product == 6144.58
