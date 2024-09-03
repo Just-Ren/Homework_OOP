@@ -1,6 +1,6 @@
 import pytest
 
-from src.main import Category, Product
+from src.main import Category, Product, Smartphone, LawnGrass
 
 @pytest.fixture
 def first_product():
@@ -81,6 +81,60 @@ def product_dict():
         "quantity": 23,
     }
 
+
+@pytest.fixture
+def smartphone1():
+    return Smartphone(
+        "Samsung Galaxy S23 Ultra",
+        "256GB, Серый цвет, 200MP камера",
+        180000.0,
+        5,
+        95.5,
+        "S23 Ultra",
+        256,
+        "Серый",
+    )
+
+
+@pytest.fixture
+def smartphone2():
+    return Smartphone(
+        name="Iphone 15",
+        description="512GB, Gray space",
+        price=210000.0,
+        quantity=8,
+        efficiency=98.2,
+        model="15",
+        memory=512,
+        color="Gray space",
+    )
+
+
+@pytest.fixture
+def lawn_grass1():
+    return LawnGrass(
+        "Газонная трава",
+        "Элитная трава для газона",
+        500.0,
+        20,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+
+
+@pytest.fixture
+def lawn_grass2():
+    return LawnGrass(
+        "Газонная трава 2",
+        "Выносливая трава",
+        450.0,
+        15,
+        "США",
+        "5 дней",
+        "Темно-зеленый",
+    )
+
 def test_category(first_category, second_category):
     assert first_category.name == "Category"
     assert first_category.description == "Description of the category"
@@ -111,8 +165,8 @@ def test_cat_get_product_list_property(first_category, second_category):
 
 
 def test_category_str(first_category, second_category):
-    assert str(first_category) == "Category, количество продуктов: 2 шт."
-    assert str(second_category) == "Category number two, количество продуктов: 3 шт."
+    assert str(first_category) == "Category, количество продуктов: 44 шт."
+    assert str(second_category) == "Category number two, количество продуктов: 76 шт."
 
 def test_product(first_product, second_product):
     assert first_product.name == "Product"
@@ -148,3 +202,22 @@ def test_product_str(first_product):
 
 def test_product_add(first_product, second_product):
     assert first_product + second_product == 6144.58
+
+def test_smartphone_init(smartphone1):
+    assert smartphone1.name == "Samsung Galaxy S23 Ultra"
+    assert smartphone1.description == "256GB, Серый цвет, 200MP камера"
+    assert smartphone1.price == 180000.0
+    assert smartphone1.quantity == 5
+    assert smartphone1.efficiency == 95.5
+    assert smartphone1.model == "S23 Ultra"
+    assert smartphone1.memory == 256
+    assert smartphone1.color == "Серый"
+
+def test_lawn_grass_init(lawn_grass1):
+    assert lawn_grass1.name == "Газонная трава"
+    assert lawn_grass1.description == "Элитная трава для газона"
+    assert lawn_grass1.price == 500.0
+    assert lawn_grass1.quantity == 20
+    assert lawn_grass1.country == "Россия"
+    assert lawn_grass1.germination_period == "7 дней"
+    assert lawn_grass1.color == "Зеленый"
