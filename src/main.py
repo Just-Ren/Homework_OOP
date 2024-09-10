@@ -1,6 +1,32 @@
 from typing import Any
+from abc import ABC, abstractmethod
 
-class Product:
+
+class Base(ABC):
+    @abstractmethod
+    def __str__(self):
+        pass
+
+class MixinPrint:
+    """Класс миксин для вывода в консоль информацию об объекте"""
+
+    def __init__(self):
+        print(repr(self))
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.name}, {self.description}, {self.price}, {self.quantity})"
+
+
+class BaseProduct(ABC):
+    """Абстрактный класс для всех продуктов"""
+
+    @classmethod
+    @abstractmethod
+    def new_product(cls, *args, **kwargs):
+        pass
+
+
+class Product(BaseProduct, MixinPrint):
     """Продукт"""
 
     name: str
@@ -13,12 +39,15 @@ class Product:
         self.description = description
         self.__price = price
         self.quantity = quantity
+        super().__init__()
 
     def __str__(self):
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other):
-        return self.quantity * self.price + other.quantity * other.price
+        if type(other) is Product:
+            return self.quantity * self.price + other.quantity * other.price
+        raise TypeError
 
     @classmethod
     def new_product(cls, new_product: dict):
@@ -36,12 +65,12 @@ class Product:
     @price.setter
     def price(self, value):
         if value <= 0:
-            print("Цена не должна быть нулевая или орицательная")
+            print("Цена не должна быть нулевая или отрицательная")
         else:
             self.__price = value
 
 
-class Category:
+class Category(Base):
     """Категория товара"""
 
     category_count = 0
@@ -60,14 +89,14 @@ class Category:
         print(Category.product_count)
 
     def __str__(self):
-        all_quantity = 0
-        for j in self.__products:
-            all_quantity += j.quantity
-        return f"{self.name}, количество продуктов: {all_quantity} шт."
+        return f"{self.name}, количество продуктов: {len(self.__products)} шт."
 
     def add_product(self, product: Product) -> Any:
-        self.__products.append(product)
-        Category.product_count += 1
+        if isinstance(product, Product):
+            self.__products.append(product)
+            Category.product_count += 1
+        else:
+            raise TypeError
 
     @property
     def get_product_list(self) -> str:
@@ -105,45 +134,169 @@ class ProductIterator:
         else:
             raise StopIteration
 
+class Smartphone(Product):
+    """Товары категории Сматрфоны"""
+
+    def __init__(
+        self, name, description, price, quantity, efficiency, model, memory, color
+    ):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+    def __add__(self, other):
+        if type(other) is Smartphone:
+            return self.quantity * self.price + other.quantity * other.price
+        raise TypeError
+
+class LawnGrass(Product):
+    """Товары категории Газонная трава"""
+
+    def __init__(
+        self, name, description, price, quantity, country, germination_period, color
+    ):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+    def __add__(self, other):
+        if type(other) is LawnGrass:
+            return self.quantity * self.price + other.quantity * other.price
+        raise TypeError
+
+class Order(Base):
+    product: str
+    quantity: int
+    total_price: float
+
+    def __init__(self, product, quantity):
+        self.product = product
+        self.quantity = quantity
+        self.total_price = self.get_total_price()
+
+    def __str__(self):
+        return f"Ваш заказ: {self.product.name}, {self.quantity} шт. на сумму {self.total_price} руб."
+
+    def get_total_price(self):
+        price = product.price
+        total_price = price * self.quantity
+        return total_price
+
 
 if __name__ == "__main__":
-    product1 = Product(
-        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+    smartphone1 = Smartphone(
+        "Samsung Galaxy S23 Ultra",
+        "256GB, Серый цвет, 200MP камера",
+        180000.0,
+        5,
+        95.5,
+        "S23 Ultra",
+        256,
+        "Серый",
     )
+    smartphone2 = Smartphone(
+        "Iphone 15", "512GB, Gray space", 210000.0, 8, 98.2, "15", 512, "Gray space"
+    )
+    smartphone3 = Smartphone(
+        "Xiaomi Redmi Note 11",
+        "1024GB, Синий",
+        31000.0,
+        14,
+        90.3,
+        "Note 11",
+        1024,
+        "Синий",
+    )
+
+    print(smartphone1.name)
+    print(smartphone1.description)
+    print(smartphone1.price)
+    print(smartphone1.quantity)
+    print(smartphone1.efficiency)
+    print(smartphone1.model)
+    print(smartphone1.memory)
+    print(smartphone1.color)
+
+    print(smartphone2.name)
+    print(smartphone2.description)
+    print(smartphone2.price)
+    print(smartphone2.quantity)
+    print(smartphone2.efficiency)
+    print(smartphone2.model)
+    print(smartphone2.memory)
+    print(smartphone2.color)
+    print(smartphone3.name)
+    print(smartphone3.description)
+    print(smartphone3.price)
+    print(smartphone3.quantity)
+    print(smartphone3.efficiency)
+    print(smartphone3.model)
+    print(smartphone3.memory)
+    print(smartphone3.color)
+
+    grass1 = LawnGrass(
+        "Газонная трава",
+        "Элитная трава для газона",
+        500.0,
+        20,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+    grass2 = LawnGrass(
+        "Газонная трава 2",
+        "Выносливая трава",
+        450.0,
+        15,
+        "США",
+        "5 дней",
+        "Темно-зеленый",
+    )
+
+if __name__ == '__main__':
+    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
     product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
     product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
 
-    category1 = Category(
-        "Смартфоны",
-        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
-        [product1, product2, product3],
-    )
+    print(product1.name)
+    print(product1.description)
+    print(product1.price)
+    print(product1.quantity)
 
-    iterator = ProductIterator(category1)
-    for product in iterator:
-        print(product)
+    print(product2.name)
+    print(product2.description)
+    print(product2.price)
+    print(product2.quantity)
 
-if __name__ == "__main__":
-    product1 = Product(
-        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
-    )
-    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+    print(product3.name)
+    print(product3.description)
+    print(product3.price)
+    print(product3.quantity)
 
-    print(str(product1))
-    print(str(product2))
-    print(str(product3))
+    category1 = Category("Смартфоны",
+                         "Смартфоны, как средство не только коммуникации, "
+                         "но и получения дополнительных функций для удобства жизни",
+                         [product1, product2, product3])
 
-    category1 = Category(
-        "Смартфоны",
-        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
-        [product1, product2, product3],
-    )
+    print(category1.name == "Смартфоны")
+    print(category1.description)
+    print(len(category1.products))
+    print(category1.category_count)
+    print(category1.product_count)
 
-    print(str(category1))
+    product4 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
+    category2 = Category("Телевизоры",
+                         "Современный телевизор, который позволяет "
+                         "наслаждаться просмотром, станет вашим другом и помощником",
+                         [product4])
 
-    print(category1.get_product_list)
+    print(category2.name)
+    print(category2.description)
+    print(len(category2.products))
+    print(category2.products)
 
-    print(product1 + product2)
-    print(product1 + product3)
-    print(product2 + product3)
+    print(Category.category_count)
+    print(Category.product_count)

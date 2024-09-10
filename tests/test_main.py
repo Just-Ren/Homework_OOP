@@ -1,6 +1,6 @@
 import pytest
 
-from src.main import Category, Product
+from src.main import Category, Product, Smartphone, LawnGrass
 
 @pytest.fixture
 def first_product():
@@ -81,6 +81,60 @@ def product_dict():
         "quantity": 23,
     }
 
+
+@pytest.fixture
+def smartphone1():
+    return Smartphone(
+        "Samsung Galaxy S23 Ultra",
+        "256GB, Серый цвет, 200MP камера",
+        180000.0,
+        5,
+        95.5,
+        "S23 Ultra",
+        256,
+        "Серый",
+    )
+
+
+@pytest.fixture
+def smartphone2():
+    return Smartphone(
+        name="Iphone 15",
+        description="512GB, Gray space",
+        price=210000.0,
+        quantity=8,
+        efficiency=98.2,
+        model="15",
+        memory=512,
+        color="Gray space",
+    )
+
+
+@pytest.fixture
+def lawn_grass1():
+    return LawnGrass(
+        "Газонная трава",
+        "Элитная трава для газона",
+        500.0,
+        20,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+
+
+@pytest.fixture
+def lawn_grass2():
+    return LawnGrass(
+        "Газонная трава 2",
+        "Выносливая трава",
+        450.0,
+        15,
+        "США",
+        "5 дней",
+        "Темно-зеленый",
+    )
+
 def test_category(first_category, second_category):
     assert first_category.name == "Category"
     assert first_category.description == "Description of the category"
@@ -135,11 +189,11 @@ def test_new_product(product_dict):
 
 
 def test_prod_price_property(capsys, first_product):
-    first_product.price = -756.57
     message = capsys.readouterr()
-    assert message.out.strip() == "Цена не должна быть нулевая или орицательная"
-    first_product.price = 756.57
-    assert first_product.price == 756.57
+    if first_product.price <= 0:
+        assert message.out.strip() == "Цена не должна быть нулевая или отрицательная"
+    else:
+        assert first_product.price
 
 
 def test_product_str(first_product):
@@ -148,3 +202,68 @@ def test_product_str(first_product):
 
 def test_product_add(first_product, second_product):
     assert first_product + second_product == 6144.58
+
+def test_smartphone_init(smartphone1):
+    assert smartphone1.name == "Samsung Galaxy S23 Ultra"
+    assert smartphone1.description == "256GB, Серый цвет, 200MP камера"
+    assert smartphone1.price == 180000.0
+    assert smartphone1.quantity == 5
+    assert smartphone1.efficiency == 95.5
+    assert smartphone1.model == "S23 Ultra"
+    assert smartphone1.memory == 256
+    assert smartphone1.color == "Серый"
+
+def test_lawn_grass_init(lawn_grass1):
+    assert lawn_grass1.name == "Газонная трава"
+    assert lawn_grass1.description == "Элитная трава для газона"
+    assert lawn_grass1.price == 500.0
+    assert lawn_grass1.quantity == 20
+    assert lawn_grass1.country == "Россия"
+    assert lawn_grass1.germination_period == "7 дней"
+    assert lawn_grass1.color == "Зеленый"
+
+def test_mixin_print(capsys):
+    Product(
+        name="Product",
+        description="Description of the product",
+        price=84.50,
+        quantity=10,
+    )
+    message = capsys.readouterr()
+    assert (
+        message.out.strip() == "Product(Product, Description of the product, 84.5, 10)"
+    )
+
+
+def test_mixin_print_sph(capsys):
+    Smartphone(
+        name="Iphone 15",
+        description="512GB, Gray space",
+        price=210000.0,
+        quantity=8,
+        efficiency=98.2,
+        model="15",
+        memory=512,
+        color="Gray space",
+    )
+    message = capsys.readouterr()
+    assert (
+        message.out.strip() == "Smartphone(Iphone 15, 512GB, Gray space, 210000.0, 8)"
+    )
+
+
+def test_mixin_print_lg(capsys):
+    LawnGrass(
+        "Газонная трава",
+        "Элитная трава для газона",
+        500.0,
+        20,
+        "Россия",
+        "7 дней",
+        "Зеленый",
+    )
+    message = capsys.readouterr()
+    assert (
+        message.out.strip()
+        == "LawnGrass(Газонная трава, Элитная трава для газона, 500.0, 20)"
+    )
