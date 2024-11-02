@@ -135,6 +135,14 @@ def lawn_grass2():
         "Темно-зеленый",
     )
 
+@pytest.fixture
+def category_without_products():
+    return Category(
+        name="Category without products",
+        description="Description of the category without products",
+        products=[],
+    )
+
 def test_category(first_category, second_category):
     assert first_category.name == "Category"
     assert first_category.description == "Description of the category"
@@ -168,6 +176,22 @@ def test_category_str(first_category, second_category):
     assert str(first_category) == "Category, количество продуктов: 2 шт."
     assert str(second_category) == "Category number two, количество продуктов: 3 шт."
 
+def test_add_product(first_category, smartphone1, lawn_grass1):
+    first_category.add_product(smartphone1)
+    assert first_category.products[-1].name == "Samsung Galaxy S23 Ultra"
+    first_category.add_product(lawn_grass1)
+    assert first_category.products[-1].name == "Газонная трава"
+
+
+def test_add_product_error(first_category):
+    with pytest.raises(TypeError):
+        first_category.add_product(1)
+
+
+def test_middle_price(first_category, category_without_products):
+    assert first_category.middle_price() == 120.185
+    assert category_without_products.middle_price() == 0
+
 def test_product(first_product, second_product):
     assert first_product.name == "Product"
     assert first_product.description == "Description of the product"
@@ -200,18 +224,18 @@ def test_product_str(first_product):
     assert str(first_product) == "Product, 84.5 руб. Остаток: 10 шт."
 
 
-def test_product_add(first_product, second_product):
+def test_product_add(
+    first_product, second_product, smartphone1, smartphone2, lawn_grass1, lawn_grass2
+):
     assert first_product + second_product == 6144.58
+    assert smartphone1 + smartphone2 == 2580000.0
+    assert lawn_grass1 + lawn_grass2 == 16750.0
 
-def test_smartphone_init(smartphone1):
-    assert smartphone1.name == "Samsung Galaxy S23 Ultra"
-    assert smartphone1.description == "256GB, Серый цвет, 200MP камера"
-    assert smartphone1.price == 180000.0
-    assert smartphone1.quantity == 5
-    assert smartphone1.efficiency == 95.5
-    assert smartphone1.model == "S23 Ultra"
-    assert smartphone1.memory == 256
-    assert smartphone1.color == "Серый"
+
+def test_product_add_error(smartphone2, lawn_grass2):
+    with pytest.raises(TypeError):
+        smartphone2 + lawn_grass2
+        smartphone2 + 3
 
 def test_lawn_grass_init(lawn_grass1):
     assert lawn_grass1.name == "Газонная трава"
